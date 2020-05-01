@@ -1,0 +1,108 @@
+---
+title: "Segunda Lista de Exercícios de Arquiteturas/PAD"
+author: "Felipe Menino Carlos"
+date: "01/05/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Objetivo 
+
+Objetivo: O principal objetivo desta lista de exercícios é fixar conceitos vistos em sala de aula sobre hierarquias de memória, em particular com relação a memórias cache.
+
+## Exercícios
+
+1. Sabe-se que um programa, ao ser executado num certo sistema, apresentou a seguinte sequência de endereços hexadecimais nos seus acessos à memória:\
+
+022, 014, 035, 105, 034, 034, 035, 100, 053, 035, 014, 047, 008, 105, 014, 100, 035, 003, 008, 020\
+
+Supondo que o sistema contenha uma cache de 16 entradas, utilizando mapeamento direto, e que a cache estava inicialmente vazia, determine o resultado (isto  é, M:  miss ou H:  hit)  para  cada  acesso  da  sequência  mostrada. Determine também a  taxa total de acerto (hit-ratio) na cache. 
+
+`Sugestão`: monte um diagrama com o estado da cache após cada acesso
+
+Obs.: Para a realização deste exercício, foi assumido que cada bloco de memória contém 1 byte, e que as operações de movimentação dos blocos entre memória principal e memória Cache são feitos byte a byte.\
+
+Como visto durante as aulas, a memória Cache desempenha um papel muito importante para o desempenho de computadores, uma vez que este é resposável por tornar disponível ao processador dados que estão sendo utilizados no processamento, evitando a necessidade de recuperar dados na memória principal, que por vezes pode ser um impeditivo para o desempenho. 
+
+Dentre as principais características da memória Cache estão sua alta velocidade e sua pequena quantidade de armazenamento, além de sua forma de organização em níveis hierárquicos. Por contar com uma pequena quantidade de memória disponível, faz-se necessário a utilização de uma função de mapeamento (@ref), que mapeia os dados entre a memória principal e a memória Cache. Este exercício utiliza de umas das técnicas de mapeamento, o `Mapeamento direto`, onde cada bloco da memória principal fica vinculado a somente um bloco da memória Cache.
+
+<!--
+Tal relação pode ser expressa por $EndereçoDoBloco \ mod \ TotalDeBlocosNaCache$, para auxíliar nesta atividade, tal relação foi implementada em R, como apresentado abaixo.
+
+```R
+mapeamentoDireto <- function(enderecoDoBloco, tamanhoCache=16)
+{
+  return(strtoi(enderecoDoBloco, base=16) %% tamanhoCache);
+}
+```
+-->
+
+\newpage
+
+A Tabela abaixo apresenta as mudanças da memória Cache frente a cada um dos acessos de memória realizados. Para o entendimento da atividade, uma representação gráfica \footnote{Disponível em: } também foi criada
+
+<!-- Ideia da tabela: http://www.ufjf.br/eduardo_barrere/files/2013/03/Aula07.pdf -->
+\begin{table}[!htbp]
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\multicolumn{1}{|l|}{N° do acesso} & \multicolumn{1}{l|}{Endereço Hexadecimal} & \multicolumn{1}{l|}{Endereço Binário} & \multicolumn{1}{l|}{Hit ou Miss} & \multicolumn{1}{l|}{Bloco de cache atribuído} \\ \hline
+1                                  & 0x22                                      & 100010                                & Miss                             & 0010                                          \\ \hline
+2                                  & 0x14                                      & 10100                                 & Miss                             & 0100                                          \\ \hline
+3                                  & 0x035                                     & 110101                                & Miss                             & 0101                                          \\ \hline
+4                                  & 0x105                                     & 100000101                             & Miss                             & 0101                                          \\ \hline
+5                                  & 0x034                                     & 110100                                & Miss                             & 0100                                          \\ \hline
+6                                  & 0x034                                     & 110100                                & Hit                              & 0100                                          \\ \hline
+7                                  & 0x035                                     & 110101                                & Miss                             & 0101                                          \\ \hline
+8                                  & 0x100                                     & 100000000                             & Miss                             & 0000                                          \\ \hline
+9                                  & 0x053                                     & 1010011                               & Miss                             & 0011                                          \\ \hline
+10                                 & 0x035                                     & 110101                                & Hit                              & 0101                                          \\ \hline
+11                                 & 0x014                                     & 10100                                 & Miss                             & 0100                                          \\ \hline
+12                                 & 0x047                                     & 1000111                               & Miss                             & 0111                                          \\ \hline
+13                                 & 0x008                                     & 1000                                  & Miss                             & 1000                                          \\ \hline
+14                                 & 0x105                                     & 100000101                             & Miss                             & 0101                                          \\ \hline
+15                                 & 0x014                                     & 10100                                 & Hit                              & 0100                                          \\ \hline
+16                                 & 0x100                                     & 100000000                             & Hit                              & 0000                                          \\ \hline
+17                                 & 0x035                                     & 110101                                & Miss                             & 0101                                          \\ \hline
+18                                 & 0x003                                     & 0011                                  & Miss                             & 0011                                          \\ \hline
+19                                 & 0x008                                     & 1000                                  & Hit                              & 1000                                          \\ \hline
+20                                 & 0x020                                     & 100000                                & Miss                             & 0000                                          \\ \hline
+\end{tabular}
+\label{tab:mapeamentoDireto}
+\end{table}
+
+A Tabela acima apresenta cada um dos acessos e as respectivas mudanças realizadas dentro da memória Cache. Com isto, ao final de todos os acessos tem-se as seguintes memórias válidas.
+
+\begin{table}[!htbp]
+\centering
+\begin{tabular}{|c|c|c|c|c|l|l|l|}
+\hline
+\multicolumn{1}{|l|}{Endereço de memória Cache} & \multicolumn{1}{l|}{0010} & \multicolumn{1}{l|}{0100} & \multicolumn{1}{l|}{0101} & \multicolumn{1}{l|}{0000} & 0011 & 0111 & 1000 \\ \hline
+Flag                                            & 000                       & 000                       & 000                       & 000                       & 000  & 000  & 000  \\ \hline
+Bit de validação                                & 1                         & 1                         & 1                         & 1                         & 1    & 1    & 1    \\ \hline
+\end{tabular}
+\end{table}
+
+A determinação do *hit-ration* é defina da seguinte forma
+
+<center>
+$$
+hit\_ration = \frac{hit_{total}}{acesso_{total}}
+$$
+</center>
+
+Com isto, o *hit\_ration* deste exercício é
+
+$$
+hit\_ration = \frac{5}{20} = 0.25 \ ou \ 25\%
+$$
+
+\newpage
+
+2. Considere  o  programa `prog.f` e a subrotina continda no arquivo `mysecond.c`, disponíveis na home-page do curso. Pede-se o seguinte:
+
+- a. Compile este  programa em qualquer  sistema (por exemplo com gcc e gfortran), execute-o e informe os resultados, incluindo o tempo de execução obtido.
+- b. Altere o segundo loop duplo do programa, invertendo tais loops (isto é, inverta os  loops i e j).  Compile  e  execute  esta  versão  modificada,  e  informe  os resultados da execução.
+- c. Qual das versoes acima do programa (isto é, com loops i/jou j/i)  roda mais rapidamente? Explique a razão para que isto ocorra.
