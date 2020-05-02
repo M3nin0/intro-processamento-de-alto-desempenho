@@ -46,14 +46,14 @@ $$
 SemPipeline = N * K = 100 * (15 + 25 + 30 + 20) = 9000
 $$
 
-> Agora, façamos a consideração do modo de execução com Pipeline
+> Agora, façamos a consideração do modo de execução com pipeline
 
 
 $$
 ComPipeline = K + (N - 1) = 4 + (100 - 1) = 103
 $$
 
-> Nesta parte, é considerado que a conta $SemPipeline$ está sendo `quantificada` em segundos e que o $ComPipeline$ apenas possui ciclos, desta forma, para tornar comparável, faz-se a multiplicação do $ComPipeline$ por 30s, já que este representa o tempo de cíclo único utilizado no Pipeline.
+> Nesta parte, é considerado que o valor $SemPipeline$ está sendo `quantificado` em segundos e que o $ComPipeline$ em ciclos, desta forma, para tornar comparável, faz-se a multiplicação do $ComPipeline$ por 30s, já que este representa o tempo de cíclo único utilizado no pipeline.
 
 $$
 ComPipeline_S = ComPipeline * 30 = 3090
@@ -71,17 +71,17 @@ $$
 
 - (c) Caso seja possível subdividir uma das sub-tarefas em duas novas sub-tarefas de igual duração, associando um módulo  para a execução de cada uma, qual das sub-tarefas deve ser escolhida para divisão ?
 
-> Para reduzir a necessidade de um ciclo muito grande, a sub-tarefa escolhida para a subdivisão pode ser a que possui o tempo de execução igual a $30s$
+> Para reduzir a necessidade de um ciclo mínimo grande, a sub-tarefa escolhida para a subdivisão será a com tempo de execução igual a $30s$
 
 - (d) Após a divisão proposta no ítem anterior, qual o novo speedup possível em relação à execução estritamente serial das 100 tarefas ?
 
-> Inicialmente é necessário definir qual será o novo tamanho do ciclo, uma vez que o maior ciclo que antes era $30s$ deixou de existir, assim, o novo tamanho de ciclo para o pipeline passa a ser $25s$, por possuir o maior tempo de execução. Com esta mudança, os mesmos passos apresentados no exercício 1(b) podem ser realizados. O valor $SemPipeline$ permanece o mesmo, já que mesmo dividindo as atividades, o valor total, utilizado na conta, será o mesmo.
+> Inicialmente é necessário definir qual será o novo tamanho do ciclo, uma vez que o maior ciclo que antes era $30s$ deixou de existir, assim, o novo tamanho de ciclo para o pipeline passa a ser $25s$, por possuir o maior tempo de execução. Com esta mudança, os mesmos passos apresentados no exercício 1(b) podem ser realizados. Note que, o valor $SemPipeline$ permanece igual, já que mesmo dividindo as atividades, o valor total de tempo utilizado na conta será o mesmo.
 
 $$
 ComPipeline = K + (N - 1) = 5 + (100 - 1) = 104
 $$
 
-> Agora o calculo de tempo é aplicado, considerando o valor $25s$
+> Agora o cálculo de tempo é aplicado, considerando o valor $25s$
 
 $$
 ComPipeline_S = ComPipeline * 25 = 2600
@@ -93,7 +93,7 @@ $$
 Speedup = \frac{N * K}{K + (N - 1)} = \frac{SemPipeline}{ComPipeline_S} = \frac{9000}{2600} = 3.461538
 $$
 
-> Com isto, com a mudança no tamanho das subtarefas, tem-se um Speedup de $3.461538$ com relação ao modo estritamente serial.\
+> Com isto, com a mudança no tamanho das sub-tarefas, tem-se um Speedup de $3.461538$ com relação ao modo estritamente serial.\
 
 2) Considere  a  expressão  para  o  speedup vista  em  aula, $S_P = \frac{1}{1 - f + \frac{f}{P}}$.  Plote  o  speedup como  função  do  número  de  processadores  (P),  dentro  do  intervalo    $1 \leq P \leq 128$, supondo que a fração paralelizável (f) de um programa corresponde a:
 
@@ -153,7 +153,7 @@ questao_b = speedup_amdahl(0.80, quantidade_de_processadores)
 - (a) 8 processadores
 - (b) 128 processadores
 
-> Este exercício apresenta um outro ponto de vista do que foi apresentado no exercício anterior. Faz isto através da variação do fator de paralelização (f), de modo que a influência da influência da fração paralelizável $f$ de um programa seja visulizada.
+> Este exercício apresenta um outro ponto de vista do que foi apresentado no exercício anterior. Faz isto através da variação do fator de paralelização (f), de modo que a influência da fração paralelizável $f$ de um programa seja visulizada.
 
 * (a) 8 processadores
 
@@ -185,7 +185,7 @@ questao_b = speedup_amdahl(intervalo_fracao_paralelizavel, 128)
     + ggtitle('Speedup com $f \in (0, 1)$ e p = 128'))
 ```
 
-> Ao analisar as figuras é possível perceber a influência da fração paralelizável do programa. Ao comparar os gráficos, até certo ponto, os dois sistemas, mesmo possuindo uma quantidade muito diferente de processadores, acabam tendo resultados próximos, mesmo havendo diferenças significativas na quantidade de recursos de cada um dos sistemas analisados. Assim, é possível perceber que, como apresentado em sala de aula, se o programa não consumir todos os recursos computacionais de modo a tirar o máximo proveito do mesmo, tem-se disperdício de recursos, financeiros e computacionais.\
+> Ao analisar as figuras é possível perceber a influência da fração paralelizável do programa, veja que até certo ponto os dois sistemas acabam tendo resultados próximos, mesmo havendo diferenças significativas na quantidade de recursos de cada um. Assim, é possível perceber que, como apresentado em sala de aula, se o programa não consumir os recursos computacionais de modo a tirar o máximo proveito do mesmo, tem-se disperdício de recursos, financeiros e computacionais.\
 
 4) Considere um programa no qual a fração paralelizável corresponde a  90%  do tempo de uma execução convencional em um processador. 
 
@@ -223,7 +223,7 @@ $$
 
 * (d) Quantos  processadores  são  necessários  para  executar  este  programa  na  metade do tempo da execução no sistema com 16 processadores? (Justifique a resposta)
 
-> Para este exercício, antes de realizar testes aplicando a lei de Amdahl para verificar a quantidade de processadores necessários, o que computacionalmente poderia ser realizado de forma simples, façamos a análise do `Speedup máximo` que este programa pode alcançar.
+> Para este exercício, antes de realizar testes diretamente com o Speedup para verificar a quantidade de processadores necessários, o que computacionalmente poderia ser realizado de forma simples, façamos a análise do `Speedup máximo` que este programa pode alcançar.
 
 $$
 \frac{1}{1 - f} = \frac{1}{1 - 0.90} \approx 10
@@ -251,9 +251,7 @@ def speedup_gustafson(f, p):
     })
 ```
 
-<!--ToDo-->
 - (a) $f = 98\% ,  1 \le P \le 128$\
-
 
 ```{python, echo = FALSE, fig.align = "center"}
 questao_a = speedup_gustafson(0.98, np.arange(1, 129))
@@ -265,11 +263,6 @@ questao_a = speedup_gustafson(0.98, np.arange(1, 129))
     + scale_x_continuous(breaks = np.arange(0, 128, 10))
     + ggtitle('Speedup com $p \in [1, 128]$ e f = 98%'))
 ```
-
-<!--ToDo descrição-->
-Comparando com o gráfico do exercício 2a, que possuí os mesmos valores,  é possível perceber que ao realizar a consideração do speedup em escala, tem-se um ganho que cresce muito mais rápido que o speedup de Amdahl. Isto ocorre por conta do ponto de vista que está sendo considerado neste calculo, onde problemas maiores serão aplicados no sistema em questão.
-
-\newpage
 
 * (b) 8 processadores,  $0 < f < 1$\
 
@@ -284,6 +277,8 @@ questao_b = speedup_gustafson(np.arange(0.1, 1, 0.1), 8)
     # + scale_y_continuous(breaks = np.arange(0, questao_b['speedup'].max(), 2.5))
     + ggtitle('Speedup com $f \in (0, 1)$ e p = 8'))
 ```
+ 
+Ao comprar os resultados apresentados com a utilização do `speedup-em-escala` com os resultados apresentados nos exercícios 2-a e 3-a, é possível perceber que neste speedup, por considerar um cenário diferente, onde a quantidade de recursos dita a dimensão do problema que está sendo trabalho, tem-se resultados com crescimento de speedup muito maior.
  
 \newpage
 # Referências
