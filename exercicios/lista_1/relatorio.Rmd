@@ -1,0 +1,224 @@
+---
+title: "Primeira Lista de Exercíciosde Arquiteturas/PAD"
+author: "Felipe Menino Carlos"
+date: "28/04/2020"
+output: pdf_document
+---
+
+```{r, echo=FALSE}
+library(reticulate)
+reticulate::use_condaenv('/home/felipe/anaconda3/')
+```
+
+```{python, echo=FALSE}
+import numpy as np
+import pandas as pd
+from plotnine import *
+
+import plotnine
+
+plotnine.options.figure_size = (5.4, 3.8)
+
+import warnings
+warnings.filterwarnings("ignore")
+```
+
+## Objetivo
+
+O principal objetivo desta lista de exercícios é reforçar a fixação dos conceitos vistos em sala de aula sobre pipeline, sobre a lei de Amdahl e sobre o speedup resultante da execução de um programa num sistema paralelo. Para os exercícios nos quais são pedidosgráficos, utilize qualquer programa de plotagem.\
+
+## Exercícios
+
+Abaixo são apresentados os exercícios propostos na lista, estes foram resolvidos utilizando a linguagem de programação [Python](https://www.python.org/) junto a biblioteca de funcionalidades para a visualização gráfica [plotnine](https://plotnine.readthedocs.io/en/stable/)\
+
+1) Considere uma tarefa que pode ser dividida em sub-tarefas com durações de 15, 25, 30 e 20 segundos, respectivamente. Cada sub-tarefa é executada por um módulo especializado, e a execução é feita em modo pipeline.
+
+- (a) Qual é o tempo de ciclo mínimo para o pipeline ?
+- (b) Supondo que  existam  100  tarefas  a  executar,  qual  o speedup em  relação  à execução num modo estritamente serial?
+- (c) Caso seja possível subdividir umadas sub-tarefas em duas novas sub-tarefas de igual  duração,  associando  um  módulo  para a execução de cada uma, qual das sub-tarefas deve ser escolhida para divisão?
+- (d) Após a divisão proposta no ítem anterior, qual o novo speedup possível em relação à execução estritamente serial das 100 tarefas ?
+
+\newpage
+
+2) Considere  a  expressão  para  o  speedup vista  em  aula, $S_P = \frac{1}{1 - f + \frac{f}{P}}$.  Plote  o  speedup como  função  do  número  de  processadores  (P),  dentro  do  intervalo    $1 \leq P \leq 128$, supondo que a fração paralelizável (f) de um programa corresponde a:
+
+<!-- Para a realização do exercício, inicialmente faz-se a definição da função de Amdahl proposta do exercício em Python. A implementação é apresentada abaixo.\ -->
+
+```{python, echo = FALSE}
+def speedup_amdahl(f, p, unique = False):
+    if unique:
+        p = np.array([p])
+    
+    return pd.DataFrame({
+        'f': f,
+        'p': p,
+        'speedup': 1 / (1 - f + (f / p))
+    })
+```
+
+* (a) 98%
+
+```{python, echo = FALSE, fig.align="center"}
+plotnine.options.figure_size = (5.4, 3.5)
+
+quantidade_de_processadores = np.arange(1, 129)
+questao_a = speedup_amdahl(0.98, quantidade_de_processadores)
+
+(ggplot(questao_a, aes(x = 'p', y = 'speedup'))
+    + geom_line(size = 0.3)
+    + ylim(0, 40)
+    + xlab('Quantidade de processadores') + ylab('Speedup')
+    + scale_x_continuous(breaks = np.arange(0, 128, 10))
+    + ggtitle('Speedup com $p \in [1, 128]$ e f = 98%'))
+```
+
+Ao considerar a plotagem realizada, é possível perceber a influência da quantidade de processadores no Speedup quando a fração de paralelização do programa analisado é alto, neste, quanto maior a quantidade de processadores, maior o Speedup. 
+
+É importante lembrar que, mesmo com o aumento apresentado ser crescente, há um limite para tal crescimento.
+
+* (b) 80%
+
+```{python, echo = FALSE, fig.align = "center"}
+questao_b = speedup_amdahl(0.80, quantidade_de_processadores)
+
+(ggplot(questao_b, aes(x = 'p', y = 'speedup'))
+    + geom_line(size = 0.3)
+    + ylim(0, 40) + xlim(0, 128)
+    + xlab('Quantidade de processadores') + ylab('Speedup')
+    + scale_x_continuous(breaks = np.arange(0, 128, 10))
+    + ggtitle('Speedup com $p \in [1, 128]$ e f = 80%'))
+```
+
+O resultado desta segunda plotagem ajuda na afirmação feita anteriormente, onde a quantidade de processadores influência positivamente somente quando o programa favorece, ou seja, quando o programa possuí uma boa fração paralelizável.
+
+A função paralelizável pode até ser considerada alta, com 80\%, porém, este ainda é um valor baixo para melhor consumir os recursos, o que faz o desempenho não ser muito bom, mesmo com o aumento da quantidade de processadores.
+
+\newpage
+
+3) Plote  agora  o  speedup  em  função  da  fração  paralelizável (f)  de  um  programa,  para  o intervalo  $0 < f < 1$, supondo um sistema com:
+
+- (a) 8 processadores
+- (b) 128 processadores
+
+> Este exercício apresenta um outro ponto de vista do que foi apresentado no exercício anterior. Faz isto através da variação do fator de paralelização (f), de modo que a influência da influência da fração paralelizável $f$ de um programa seja visulizada.
+
+* (a) 8 processadores
+
+```{python, echo = FALSE, fig.align = "center"}
+intervalo_fracao_paralelizavel = np.arange(0.1, 1, 0.1)
+
+questao_a = speedup_amdahl(intervalo_fracao_paralelizavel, 8)
+
+(ggplot(questao_a, aes(x = 'f', y = 'speedup'))
+    + geom_line(size = 0.3)
+    + xlab('Fração paralelizável (%)') + ylab('Speedup')
+    + ylim(0, 10)
+    + scale_x_continuous(breaks = questao_a['f'])
+    + ggtitle('Speedup com $f \in (0, 1)$ e p = 8'))
+```
+
+* (b) 128 processadores
+
+```{python, echo = FALSE, fig.align = "center"}
+questao_b = speedup_amdahl(intervalo_fracao_paralelizavel, 128)
+
+(ggplot(questao_b, aes(x = 'f', y = 'speedup'))
+    + geom_line(size = 0.3)
+    + xlab('Fração paralelizável (%)') + ylab('Speedup')
+    + ylim(0, 10)
+    + scale_x_continuous(breaks = questao_b['f'])
+    + ggtitle('Speedup com $f \in (0, 1)$ e p = 128'))
+```
+
+Ao analisar as figuras é possível perceber a influência da fração paralelizável do programa. Ao comparar os gráficos, até certo ponto, os dois sistemas, mesmo possuindo uma quantidade muito diferente de processadores, acabam tendo resultados próximos, mesmo havendo diferenças significativas na quantidade de recursos de cada um dos sistemas analisados. Assim, é possível perceber que, como apresentado em sala de aula, se o programa não consumir todos os recursos computacionais de modo a tirar o máximo proveito do mesmo, tem-se disperdício de recursos, financeiros e computacionais.
+
+4) Considere um programa no qual a fração paralelizável corresponde a  90%  do tempo de uma execução convencional em um processador. 
+
+
+```{python, echo = FALSE}
+def eficiencia_paralela(speedup, p):
+    return speedup / p
+    
+# questao_a = speedup_amdahl(.90, 16, True)
+# print(f"Speedup com p = 16 = {questao_a['speedup'].iloc[0]}")
+```
+
+* (a) Calcule o speedup que seria obtido num sistema com 16 processadores.
+
+$$
+S_P = \frac{1}{1 - f + \frac{f}{P}} = \frac{1}{1 - 0.9 + \frac{0.9}{16}} =  6.4
+$$
+
+* (b) Calcule o speedup que seria obtido num sistema com 64 processadores.
+
+
+$$
+S_P = \frac{1}{1 - f + \frac{f}{P}} = \frac{1}{1 - 0.9 + \frac{0.9}{64}} = 8.767123
+$$
+
+* (c) Quantas vezes o sistema com 64 processadores é mais rápido que o sistema com 16 processadores para este programa?
+
+Esta relação pode ser determinada como a equação apresentada abaixo
+
+$$
+\frac{8.767123}{6.4} = 1.369863
+$$
+
+
+* (d) Quantos  processadores  são  necessários  para  executar  este  programa  na  metade do tempo da execução no sistema com 16 processadores? (Justifique a resposta)
+
+Para este exercício, antes de realizar testes aplicando a lei de Amdahl para verificar a quantidade de processadores necessários, o que computacionalmente poderia ser realizado de forma simples, façamos a análise do `Speedup máximo` que este programa pode alcançar.
+
+$$
+\frac{1}{1 - f} = \frac{1}{1 - 0.90} \approx 10
+$$
+
+Ao verificar que o speedup máximo, para este contexto, é aproximadamente 10, fica claro que não é possível melhorar a execução a ponto de diminuir sua execução pela metadade do que foi alcançado com 16 processadores. Para confirmar tal questão, a visualização abaixo apresenta uma extrapolação dos valores de $P$ considerando sua variação em um intervalo $0 \le P \le 5000$
+
+```{python, echo = FALSE, fig.align = "center"}
+speedup_de_teste = speedup_amdahl(.90, np.arange(0, 5000, 1))
+(ggplot(speedup_de_teste, aes(x = 'p', y = 'speedup')) + geom_line(size = 0.5))
+```
+
+5) Utilizando  as  mesmas  escalas  dos  gráficos  construídos  acima  em `2-a` e em  `3-a`, respectivamente, plote o `speedup-em-escala` para os seguintes casos:
+
+- (a) $f = 98\% ,  1 \le P \le 128$
+- (b) 8 processadores ,  $0 < f < 1$
+
+```{python, echo=FALSE}
+def speedup_gustafson(f, p):
+    return pd.DataFrame({
+        'f': f,
+        'p': p,
+        'speedup': (p-1) * (f + 1)
+    })
+```
+
+
+* (a) $f = 98\% ,  1 \le P \le 128$
+
+```{python, echo = FALSE}
+questao_a = speedup_gustafson(0.98, np.arange(1, 129))
+
+(ggplot(questao_a, aes(x = 'p', y = 'speedup'))
+    + geom_line(size = 0.3)
+    + ylim(0, 40) + xlim(0, 128)
+    + xlab('Quantidade de processadores') + ylab('Speedup')
+    + scale_x_continuous(breaks = np.arange(0, 128, 10))
+    + ggtitle('Speedup com $p \in [1, 128]$ e f = 98%'))
+```
+
+Comparando com o gráfico do exercício 2a, que possuí os mesmos valores,  é possível perceber que ao realizar a consideração do speedup em escala, tem-se um ganho que cresce muito mais rápido que o speedup de Amdahl. Isto ocorre por conta do ponto de vista que está sendo considerado neste calculo, onde problemas maiores serão aplicados no sistema em questão.
+
+* (b) 8 processadores,  $0 < f < 1$
+
+```{python, echo = FALSE, fig.align = "center"}
+questao_b = speedup_gustafson(np.arange(0.1, 1, 0.1), 8)
+
+(ggplot(questao_b, aes(x = 'f', y = 'speedup'))
+    + geom_line(size = 0.3)
+    + xlab('Fração paralelizável (%)') + ylab('Speedup')
+    + ylim(0, 10)
+    + scale_x_continuous(breaks = questao_b['f'])
+    + ggtitle('Speedup com $f \in (0, 1)$ e p = 8'))
+```
