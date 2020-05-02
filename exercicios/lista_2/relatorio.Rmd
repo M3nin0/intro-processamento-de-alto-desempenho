@@ -18,7 +18,7 @@ O principal objetivo desta lista de exercícios é fixar conceitos vistos em sal
 
 1. Sabe-se que um programa, ao ser executado num certo sistema, apresentou a seguinte sequência de endereços hexadecimais nos seus acessos à memória:\
 
-022, 014, 035, 105, 034, 034, 035, 100, 053, 035, 014, 047, 008, 105, 014, 100, 035, 003, 008, 020\
+> 022, 014, 035, 105, 034, 034, 035, 100, 053, 035, 014, 047, 008, 105, 014, 100, 035, 003, 008, 020\
 
 Supondo que o sistema contenha uma cache de 16 entradas, utilizando mapeamento direto, e que a cache estava inicialmente vazia, determine o resultado (isto  é, M:  miss ou H:  hit)  para  cada  acesso  da  sequência  mostrada. Determine também a  taxa total de acerto (hit-ratio) na cache. 
 
@@ -26,7 +26,7 @@ Supondo que o sistema contenha uma cache de 16 entradas, utilizando mapeamento d
 
 Obs.: Para a realização deste exercício, foi assumido que cada bloco de memória contém 1 byte, e que as operações de movimentação dos blocos entre memória principal e memória Cache são feitos byte a byte.\
 
-Como visto durante as aulas, a memória Cache desempenha um papel muito importante para o desempenho de computadores, uma vez que este é resposável por tornar disponível ao processador dados que estão sendo utilizados no processamento, evitando a necessidade de recuperar dados na memória principal, que por vezes pode ser um impeditivo para o desempenho. 
+Como visto durante as aulas, a memória Cache desempenha um papel muito importante para o desempenho de computadores, uma vez que esta é resposável por tornar disponível de forma rápida ao processador dados que estão sendo utilizados no processamento, evitando a necessidade de recuperar dados na memória principal, que por vezes pode ser um impeditivo para o desempenho. 
 
 Dentre as principais características da memória Cache estão sua alta velocidade e sua pequena quantidade de armazenamento, além de sua forma de organização em níveis hierárquicos. Por contar com uma pequena quantidade de memória disponível, faz-se necessário a utilização de uma função de mapeamento [@stallingswilliam2010], que mapeia os dados entre a memória principal e a memória Cache. Este exercício utiliza de umas das técnicas de mapeamento, o `Mapeamento direto`, onde cada bloco da memória principal fica vinculado a somente um bloco da memória Cache.
 
@@ -90,14 +90,14 @@ A determinação do *hit-ratio* é defina da seguinte forma
 
 <center>
 $$
-hit\_ratio = \frac{hit_{total}}{acesso_{total}}
+hitRatio = \frac{hit_{total}}{acesso_{total}}
 $$
 </center>
 
-Com isto, o *hit\_ratio* deste programa é
+Com isto, o *hitRatio* deste programa é:
 
 $$
-hit\_ratio = \frac{5}{20} = 0.25 \ ou \ 25\%
+hitRatio = \frac{5}{20} = 0.25 \ ou \ 25\%
 $$
 
 \newpage
@@ -125,9 +125,10 @@ Tempo                      & 0.16058301925659180                     \\ \hline
 \end{tabular}
 \end{table}
 
-- c. Qual das versoes acima do programa (isto é, com loops i/j ou j/i) roda mais rapidamente? Explique a razão para que isto ocorra.
+- c. Qual das versões acima do programa (isto é, com loops i/j ou j/i) roda mais rapidamente? Explique a razão para que isto ocorra.
 
-A segunda versão roda mais rápido. Isso ocorre por conta da maneira com que o Fortran faz o armazenamento de arrays multidimensionais na memória. @wadleighkevinrcrawfordisoml200 especificam que, diferente de C que armazena os arrays multidimensionais linhas principais, Fortran faz este armazenamento através de colunas principais, assim, ao alterar o loop, o programa passou a utilizar melhor tal característica e evitar possíveis Cache Missing e recuperações desnecessárias da memória.
+<!-- Software Optimization for High-performance Computing cap 7.6.2 -->
+> A segunda versão roda mais rápido. Isso ocorre por conta da maneira com que o Fortran faz o armazenamento de arrays multidimensionais na memória. @wadleighkevinrcrawfordisoml200 especificam que, diferente de C que armazena os arrays multidimensionais linhas principais, Fortran faz este armazenamento através de colunas principais, assim, ao alterar o loop, o programa passou a utilizar melhor tal característica e evitar possíveis Cache Missing e recuperações desnecessárias de memória.
 
 \newpage
 # Referências
