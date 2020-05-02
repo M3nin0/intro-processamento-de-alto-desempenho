@@ -180,37 +180,38 @@ speedup_de_teste = speedup_amdahl(.90, np.arange(0, 5000, 1))
 (ggplot(speedup_de_teste, aes(x = 'p', y = 'speedup')) + geom_line(size = 0.5))
 ```
 
-5) Utilizando  as  mesmas  escalas  dos  gráficos  construídos  acima  em `2-a` e em  `3-a`, respectivamente, plote o `speedup-em-escala` para os seguintes casos:
+\newpage
 
-- (a) $f = 98\% ,  1 \le P \le 128$
-- (b) 8 processadores ,  $0 < f < 1$
+5) Utilizando  as  mesmas  escalas  dos  gráficos  construídos  acima  em `2-a` e em  `3-a`, respectivamente, plote o `speedup-em-escala` para os seguintes casos:
 
 ```{python, echo=FALSE}
 def speedup_gustafson(f, p):
     return pd.DataFrame({
         'f': f,
         'p': p,
-        'speedup': (p-1) * (f + 1)
+        'speedup': (p-1) * f + 1
     })
 ```
 
+<!--ToDo-->
+- (a) $f = 98\% ,  1 \le P \le 128$\
 
-* (a) $f = 98\% ,  1 \le P \le 128$
 
-```{python, echo = FALSE}
+```{python, echo = FALSE, fig.align = "center"}
 questao_a = speedup_gustafson(0.98, np.arange(1, 129))
 
 (ggplot(questao_a, aes(x = 'p', y = 'speedup'))
     + geom_line(size = 0.3)
-    + ylim(0, 40) + xlim(0, 128)
+    + ylim(0, 41) # + xlim(0, 128)
     + xlab('Quantidade de processadores') + ylab('Speedup')
     + scale_x_continuous(breaks = np.arange(0, 128, 10))
     + ggtitle('Speedup com $p \in [1, 128]$ e f = 98%'))
 ```
 
+<!--ToDo descrição-->
 Comparando com o gráfico do exercício 2a, que possuí os mesmos valores,  é possível perceber que ao realizar a consideração do speedup em escala, tem-se um ganho que cresce muito mais rápido que o speedup de Amdahl. Isto ocorre por conta do ponto de vista que está sendo considerado neste calculo, onde problemas maiores serão aplicados no sistema em questão.
 
-* (b) 8 processadores,  $0 < f < 1$
+* (b) 8 processadores,  $0 < f < 1$\
 
 ```{python, echo = FALSE, fig.align = "center"}
 questao_b = speedup_gustafson(np.arange(0.1, 1, 0.1), 8)
@@ -220,5 +221,7 @@ questao_b = speedup_gustafson(np.arange(0.1, 1, 0.1), 8)
     + xlab('Fração paralelizável (%)') + ylab('Speedup')
     + ylim(0, 10)
     + scale_x_continuous(breaks = questao_b['f'])
+    # + scale_y_continuous(breaks = np.arange(0, questao_b['speedup'].max(), 2.5))
     + ggtitle('Speedup com $f \in (0, 1)$ e p = 8'))
 ```
+  
